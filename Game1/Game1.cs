@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,11 +12,34 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        
+        // Square texture
+        Texture2D squareTexture;
+        Vector2 squarePosition;
+        
+        // Movement speed of the square, public for easy access to change
+        float movementSpeed = 5f;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            // Updating at a fixed rate of around 30 FPS
+            //this.IsFixedTimeStep = true;
+            //this.TargetElapsedTime = new System.TimeSpan(0, 0, 0, 0, 33);
+        }
+
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Window.Title = "Active Application";
+            base.OnActivated(sender, args);
+        }
+
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Window.Title = "Unactive Application";
+            base.OnDeactivated(sender, args);
         }
 
         /// <summary>
@@ -26,7 +50,12 @@ namespace Game1
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            squarePosition = new Vector2(0, 0);
+            squareTexture = new Texture2D(this.GraphicsDevice, 100, 100);
+            Color[] colorData = new Color[100 * 100];
+            for (int i = 0; i < 10000; i++)
+                colorData[i] = Color.Red;
+            squareTexture.SetData<Color>(colorData);
 
             base.Initialize();
         }
@@ -49,7 +78,7 @@ namespace Game1
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            squareTexture.Dispose();
         }
 
         /// <summary>
@@ -59,12 +88,21 @@ namespace Game1
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (IsActive)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    Exit();
 
-            // TODO: Add your update logic here
 
-            base.Update(gameTime);
+                // Normalizing the positional movement between framerates
+                squarePosition.X += 60f * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                // Loop the square if it hits the edge of the screen
+                if (squarePosition.X > this.GraphicsDevice.Viewport.Width)
+                    squarePosition.X = 0 - squareTexture.Width;
+
+                base.Update(gameTime);
+            }
         }
 
         /// <summary>
@@ -75,7 +113,12 @@ namespace Game1
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            var fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+            Window.Title = fps.ToString();
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(squareTexture, squarePosition);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
