@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Text;
 
 namespace InputDemo
 {
@@ -11,6 +12,10 @@ namespace InputDemo
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        Texture2D playerTexture;
+        Vector2 playerPosition;
+        Vector2 playerOrigin;
 
         public Game1()
         {
@@ -26,7 +31,14 @@ namespace InputDemo
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Setting the default values of the square graphics
+            playerPosition = new Vector2(0, 0);
+            playerTexture = new Texture2D(this.GraphicsDevice, 100, 100);
+            Color[] colorData = new Color[100 * 100];
+            for (int i = 0; i < 10000; i++)
+                colorData[i] = Color.Red;
+            playerTexture.SetData<Color>(colorData);
+            playerOrigin = new Vector2(50, 50);
 
             base.Initialize();
         }
@@ -49,7 +61,7 @@ namespace InputDemo
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            playerTexture.Dispose();
         }
 
         /// <summary>
@@ -62,7 +74,34 @@ namespace InputDemo
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            KeyboardState state = Keyboard.GetState();
+
+            StringBuilder sb = new StringBuilder();
+            foreach(var key in state.GetPressedKeys())
+            {
+                sb.Append("Keys: ").Append(key).Append(" pressed ");
+            }
+
+            if (sb.Length > 0)
+                System.Diagnostics.Debug.WriteLine(sb.ToString());
+
+            if (state.IsKeyDown(Keys.Right))
+                playerPosition.X += 10;
+            if (state.IsKeyDown(Keys.Left))
+                playerPosition.X -= 10;
+            if (state.IsKeyDown(Keys.Up))
+                playerPosition.Y -= 10;
+            if (state.IsKeyDown(Keys.Down))
+                playerPosition.Y += 10;
+
+            if (playerPosition.X > this.GraphicsDevice.Viewport.Width)
+                playerPosition.X = 0 - playerTexture.Width;
+            if (playerPosition.X < 0)
+                playerPosition.X = this.GraphicsDevice.Viewport.Width + playerTexture.Width;
+            if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
+                playerPosition.Y = 0 - playerTexture.Height;
+            if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
+                playerPosition.Y = this.GraphicsDevice.Viewport.Height + playerTexture.Height;
 
             base.Update(gameTime);
         }
@@ -75,7 +114,11 @@ namespace InputDemo
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(playerTexture, playerPosition);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
