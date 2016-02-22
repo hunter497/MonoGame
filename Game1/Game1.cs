@@ -12,13 +12,16 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        Texture2D logoTexture;
+        Vector2 logoPosition;
         
-        // Square texture
-        Texture2D squareTexture;
-        Vector2 squarePosition;
+        //// Square texture
+        //Texture2D squareTexture;
+        //Vector2 squarePosition;
         
-        // Movement speed of the square, public for easy access to change
-        float movementSpeed = 5f;
+        //// Movement speed of the square, public for easy access to change
+        //float movementSpeed = 5f;
 
         public Game1()
         {
@@ -50,12 +53,15 @@ namespace Game1
         /// </summary>
         protected override void Initialize()
         {
-            squarePosition = new Vector2(0, 0);
-            squareTexture = new Texture2D(this.GraphicsDevice, 100, 100);
-            Color[] colorData = new Color[100 * 100];
-            for (int i = 0; i < 10000; i++)
-                colorData[i] = Color.Red;
-            squareTexture.SetData<Color>(colorData);
+            //// Setting the default values of the square graphics
+            //squarePosition = new Vector2(0, 0);
+            //squareTexture = new Texture2D(this.GraphicsDevice, 100, 100);
+            //Color[] colorData = new Color[100 * 100];
+            //for (int i = 0; i < 10000; i++)
+            //    colorData[i] = Color.Red;
+            //squareTexture.SetData<Color>(colorData);
+
+            logoPosition = new Vector2(0, 0);
 
             base.Initialize();
         }
@@ -69,7 +75,7 @@ namespace Game1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            logoTexture = this.Content.Load<Texture2D>("logo");
         }
 
         /// <summary>
@@ -78,7 +84,7 @@ namespace Game1
         /// </summary>
         protected override void UnloadContent()
         {
-            squareTexture.Dispose();
+            //squareTexture.Dispose();
         }
 
         /// <summary>
@@ -94,12 +100,12 @@ namespace Game1
                     Exit();
 
 
-                // Normalizing the positional movement between framerates
-                squarePosition.X += 60f * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                //// Normalizing the positional movement between framerates
+                //squarePosition.X += 60f * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Loop the square if it hits the edge of the screen
-                if (squarePosition.X > this.GraphicsDevice.Viewport.Width)
-                    squarePosition.X = 0 - squareTexture.Width;
+                //// Loop the square if it hits the edge of the screen
+                //if (squarePosition.X > this.GraphicsDevice.Viewport.Width)
+                //    squarePosition.X = 0 - squareTexture.Width;
 
                 base.Update(gameTime);
             }
@@ -116,8 +122,21 @@ namespace Game1
             var fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
             Window.Title = fps.ToString();
 
+            // All Texture calls go within the sprite batch
             spriteBatch.Begin();
-            spriteBatch.Draw(squareTexture, squarePosition);
+
+            //spriteBatch.Draw(squareTexture, squarePosition);
+
+            // Can translate and scale the texture using a destination rectangle
+            // Rotates via the rotation property, but that rotates about the origin
+            spriteBatch.Draw(logoTexture, 
+                destinationRectangle:
+                new Rectangle(150, 150, 200, 200),
+                rotation:-45f,
+                origin:new Vector2(logoTexture.Width/2, logoTexture.Height/2),
+                color:Color.Red,
+                effects:SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
