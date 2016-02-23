@@ -126,6 +126,9 @@ namespace TileEngine
             KeyboardState keyboardState = Keyboard.GetState();
             Vector2 motion = Vector2.Zero;
 
+            //GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            //motion = new Vector2(gamePadState.ThumbSticks.Left.X, -gamePadState.ThumbSticks.Left.Y);
+
             if (keyboardState.IsKeyDown(Keys.Up))
                 motion.Y--;
             if (keyboardState.IsKeyDown(Keys.Down))
@@ -135,8 +138,8 @@ namespace TileEngine
             if (keyboardState.IsKeyDown(Keys.Right))
                 motion.X++;
 
-            // Normalize the motion vector to make sure that the speed isn't greater than one for a diagonal direction.
-            if(motion != Vector2.Zero)
+            //Normalize the motion vector to make sure that the speed isn't greater than one for a diagonal direction.
+            if (motion != Vector2.Zero)
                 motion.Normalize();
 
             cameraPosition += motion * cameraSpeed;
