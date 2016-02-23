@@ -72,7 +72,6 @@ namespace DungeonCrawler
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             tileLayer.LoadTileTextures(
@@ -92,7 +91,6 @@ namespace DungeonCrawler
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
