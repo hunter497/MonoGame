@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace TileEngine
 {
@@ -11,6 +12,13 @@ namespace TileEngine
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        List<Texture2D> tileTextures;
+
+        int[,] tileMap;
+
+        int tileWidth = 64;
+        int tileHeight = 64;
 
         public Game1()
         {
@@ -26,7 +34,18 @@ namespace TileEngine
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            tileTextures = new List<Texture2D>();
+
+            tileMap = new int[,] {
+            { 1, 1, 2, 4, 2, 1, 1, 1},
+            { 1, 0, 0, 4, 0, 0, 0, 1},
+            { 1, 0, 0, 4, 4, 0, 0, 1},
+            { 1, 0, 0, 0, 4, 0, 0, 1},
+            { 1, 0, 0, 0, 4, 4, 0, 1},
+            { 1, 0, 0, 0, 0, 4, 0, 1},
+            { 1, 0, 0, 0, 0, 4, 0, 1},
+            { 1, 1, 1, 1, 2, 4, 2, 1}
+        };
 
             base.Initialize();
         }
@@ -40,7 +59,19 @@ namespace TileEngine
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            Texture2D texture;
+
+            texture = Content.Load<Texture2D>("Tiles/wood");
+            tileTextures.Add(texture);
+            texture = Content.Load<Texture2D>("Tiles/wall");
+            tileTextures.Add(texture);
+            texture = Content.Load<Texture2D>("Tiles/wall_purple");
+            tileTextures.Add(texture);
+            texture = Content.Load<Texture2D>("Tiles/wood_dark");
+            tileTextures.Add(texture);
+            texture = Content.Load<Texture2D>("Tiles/brick");
+            tileTextures.Add(texture);
+
         }
 
         /// <summary>
@@ -75,7 +106,25 @@ namespace TileEngine
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            int tileMapWidth = tileMap.GetLength(1);
+            int tileMapHeight = tileMap.GetLength(0);
+
+            for(int x=0; x < tileMapWidth; x++)
+            {
+                for (int y=0; y < tileMapHeight; y++)
+                {
+                    int textureIndex = tileMap[y, x];
+                    Texture2D texture = tileTextures[textureIndex];
+                    spriteBatch.Draw(
+                        texture,
+                        destinationRectangle:new Rectangle(x*tileWidth, y*tileHeight, tileWidth, tileHeight)
+                        );
+                }
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
