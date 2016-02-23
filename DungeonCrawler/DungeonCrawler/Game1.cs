@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using TileEngine;
 
 namespace DungeonCrawler
 {
@@ -13,21 +14,11 @@ namespace DungeonCrawler
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        List<Texture2D> tileTextures;
-
-        int[,] tileMap;
-
-        Vector2 cameraPosition;
-
-        int tileWidth = 64;
-        int tileHeight = 64;
-        float cameraSpeed = 10;
+        Camera camera;
+        TileLayer tileLayer;
 
         int screenWidth;
         int screenHeight;
-
-        int tileMapWidth;
-        int tileMapHeight;
 
         public Game1()
         {
@@ -43,14 +34,8 @@ namespace DungeonCrawler
         /// </summary>
         protected override void Initialize()
         {
-            tileTextures = new List<Texture2D>();
-
-            cameraPosition = new Vector2(0);
-
-            screenWidth = GraphicsDevice.Viewport.Width;
-            screenHeight = GraphicsDevice.Viewport.Height;
-
-            tileMap = new int[,] {
+            camera = new Camera();
+            tileLayer = new TileLayer(new int[,] {
             { 1, 1, 2, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             { 1, 0, 0, 4, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             { 1, 0, 0, 4, 4, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -72,10 +57,11 @@ namespace DungeonCrawler
             { 1, 0, 0, 0, 0, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             { 1, 0, 0, 0, 0, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             { 1, 1, 1, 1, 2, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-        };
+            });
 
-            tileMapWidth = tileMap.GetLength(1) * tileWidth;
-            tileMapHeight = tileMap.GetLength(0) * tileHeight;
+
+            screenWidth = GraphicsDevice.Viewport.Width;
+            screenHeight = GraphicsDevice.Viewport.Height;
 
             base.Initialize();
         }
@@ -89,18 +75,14 @@ namespace DungeonCrawler
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Texture2D texture;
-
-            texture = Content.Load<Texture2D>("Tiles/wood");
-            tileTextures.Add(texture);
-            texture = Content.Load<Texture2D>("Tiles/wall");
-            tileTextures.Add(texture);
-            texture = Content.Load<Texture2D>("Tiles/wall_purple");
-            tileTextures.Add(texture);
-            texture = Content.Load<Texture2D>("Tiles/wood_dark");
-            tileTextures.Add(texture);
-            texture = Content.Load<Texture2D>("Tiles/brick");
-            tileTextures.Add(texture);
+            tileLayer.LoadTileTextures(
+                Content,
+                "Tiles/wood",
+                "Tiles/wall",
+                "Tiles/wall_purple",
+                "Tiles/wood_dark",
+                "Tiles/brick"
+                );
 
         }
 
@@ -123,35 +105,16 @@ namespace DungeonCrawler
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            KeyboardState keyboardState = Keyboard.GetState();
-            Vector2 motion = Vector2.Zero;
+            camera.Update();
 
-            //GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
-            //motion = new Vector2(gamePadState.ThumbSticks.Left.X, -gamePadState.ThumbSticks.Left.Y);
-
-            if (keyboardState.IsKeyDown(Keys.Up))
-                motion.Y--;
-            if (keyboardState.IsKeyDown(Keys.Down))
-                motion.Y++;
-            if (keyboardState.IsKeyDown(Keys.Left))
-                motion.X--;
-            if (keyboardState.IsKeyDown(Keys.Right))
-                motion.X++;
-
-            //Normalize the motion vector to make sure that the speed isn't greater than one for a diagonal direction.
-            if (motion != Vector2.Zero)
-                motion.Normalize();
-
-            cameraPosition += motion * cameraSpeed;
-
-            if (cameraPosition.X < 0)
-                cameraPosition.X = 0;
-            if (cameraPosition.Y < 0)
-                cameraPosition.Y = 0;
-            if (cameraPosition.X > tileMapWidth - screenWidth)
-                cameraPosition.X = tileMapWidth - screenWidth;
-            if (cameraPosition.Y > tileMapHeight - screenHeight)
-                cameraPosition.Y = tileMapHeight - screenHeight;
+            if (camera.Position.X < 0)
+                camera.Position.X = 0;
+            if (camera.Position.Y < 0)
+                camera.Position.Y = 0;
+            if (camera.Position.X > tileLayer.WidthInPixels - screenWidth)
+                camera.Position.X = tileLayer.WidthInPixels - screenWidth;
+            if (camera.Position.Y > tileLayer.HeightInPixels - screenHeight)
+                camera.Position.Y = tileLayer.HeightInPixels - screenHeight;
 
             base.Update(gameTime);
         }
@@ -164,29 +127,7 @@ namespace DungeonCrawler
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
-
-            int tileMapWidth = tileMap.GetLength(1);
-            int tileMapHeight = tileMap.GetLength(0);
-
-            for(int x=0; x < tileMapWidth; x++)
-            {
-                for (int y=0; y < tileMapHeight; y++)
-                {
-                    int textureIndex = tileMap[y, x];
-                    Texture2D texture = tileTextures[textureIndex];
-                    spriteBatch.Draw(
-                        texture,
-                        destinationRectangle:new Rectangle(
-                            x * tileWidth - (int)cameraPosition.X,
-                            y * tileHeight - (int)cameraPosition.Y,
-                            tileWidth,
-                            tileHeight)
-                        );
-                }
-            }
-
-            spriteBatch.End();
+            tileLayer.Draw(spriteBatch, camera);
 
             base.Draw(gameTime);
         }
