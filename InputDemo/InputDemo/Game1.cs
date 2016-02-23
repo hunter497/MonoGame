@@ -21,6 +21,7 @@ namespace InputDemo
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -71,37 +72,47 @@ namespace InputDemo
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || Mouse.GetState().RightButton == ButtonState.Pressed)
                 Exit();
 
-            KeyboardState state = Keyboard.GetState();
 
-            StringBuilder sb = new StringBuilder();
-            foreach(var key in state.GetPressedKeys())
-            {
-                sb.Append("Keys: ").Append(key).Append(" pressed ");
-            }
+            //**    Mouse State Tutorial!!!  **//     
+            MouseState state = Mouse.GetState();
+            playerPosition.X = state.X;
+            playerPosition.Y = state.Y;
 
-            if (sb.Length > 0)
-                System.Diagnostics.Debug.WriteLine(sb.ToString());
 
-            if (state.IsKeyDown(Keys.Right))
-                playerPosition.X += 10;
-            if (state.IsKeyDown(Keys.Left))
-                playerPosition.X -= 10;
-            if (state.IsKeyDown(Keys.Up))
-                playerPosition.Y -= 10;
-            if (state.IsKeyDown(Keys.Down))
-                playerPosition.Y += 10;
 
-            if (playerPosition.X > this.GraphicsDevice.Viewport.Width)
-                playerPosition.X = 0 - playerTexture.Width;
-            if (playerPosition.X < 0)
-                playerPosition.X = this.GraphicsDevice.Viewport.Width + playerTexture.Width;
-            if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
-                playerPosition.Y = 0 - playerTexture.Height;
-            if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
-                playerPosition.Y = this.GraphicsDevice.Viewport.Height + playerTexture.Height;
+            //**    Keyboard State Tutorial!!!  **//         
+            //KeyboardState state = Keyboard.GetState();
+
+            //StringBuilder sb = new StringBuilder();
+            //foreach(var key in state.GetPressedKeys())
+            //{
+            //    sb.Append("Keys: ").Append(key).Append(" pressed ");
+            //}
+
+            //if (sb.Length > 0)
+            //    System.Diagnostics.Debug.WriteLine(sb.ToString());
+
+            //if (state.IsKeyDown(Keys.Right))
+            //    playerPosition.X += 10;
+            //if (state.IsKeyDown(Keys.Left))
+            //    playerPosition.X -= 10;
+            //if (state.IsKeyDown(Keys.Up))
+            //    playerPosition.Y -= 10;
+            //if (state.IsKeyDown(Keys.Down))
+            //    playerPosition.Y += 10;
+
+            // Have to fix this, but working on the sprite wrapping
+            //if (playerPosition.X > this.GraphicsDevice.Viewport.Width)
+            //    playerPosition.X = 0 - playerTexture.Width;
+            //if (playerPosition.X < 0)
+            //    playerPosition.X = this.GraphicsDevice.Viewport.Width + playerTexture.Width;
+            //if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
+            //    playerPosition.Y = 0 - playerTexture.Height;
+            //if (playerPosition.Y > this.GraphicsDevice.Viewport.Height)
+            //    playerPosition.Y = this.GraphicsDevice.Viewport.Height + playerTexture.Height;
 
             base.Update(gameTime);
         }
