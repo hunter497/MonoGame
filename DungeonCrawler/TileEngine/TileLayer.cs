@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -70,6 +71,66 @@ namespace TileEngine
             map = (int[,])existingMap.Clone();
         }
 
+        public static TileLayer FromFile(ContentManager content, string filename)
+        {
+            TileLayer tileLayer;
+            bool readingTextures = false;
+            bool readingLayout = false;
+            List<string> textureNames = new List<string>();
+            List<List<int>> tempLayout = new List<List<int>>();
+
+            using (StreamReader reader = new StreamReader(filename))
+            {
+                while(!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine().Trim();
+
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (line.Contains("[Textures]"))
+                    {
+                        readingTextures = true;
+                        readingLayout = false;
+                    }
+                    else if(line.Contains("[Layout]"))
+                    {
+                        readingTextures = false;
+                        readingLayout = true;
+                    }
+                    else if(readingTextures)
+                    {
+                        textureNames.Add(line);
+                    }
+                    else if(readingLayout)
+                    {
+                        List<int> row = new List<int>();
+                        string[] cells = line.Split(' ');
+
+                        foreach (string cell in cells)
+                        {
+                            if (!string.IsNullOrEmpty(cell))
+                                row.Add(int.Parse(cell));
+                        }
+                        tempLayout.Add(row);
+                    }
+                }
+            }
+
+            int width = tempLayout[0].Count;
+            int height = tempLayout.Count;
+
+            tileLayer = new TileLayer(width, height);
+
+            for(int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    tileLayer.SetCellIndex(x, y, tempLayout[y][x]);
+
+            tileLayer.LoadTileTextures(content, textureNames.ToArray());
+
+            return tileLayer;
+        }
+
         public void LoadTileTextures(ContentManager content, params string[] textureNames)
         {
             Texture2D texture;
@@ -80,6 +141,13 @@ namespace TileEngine
                 tileTextures.Add(texture);
             }
             
+        }
+
+
+        // Dynamically remove tiles from the tile layers during the load or game running
+        public void SetCellIndex(int x, int y, int cellIndex)
+        {
+            map[y, x] = cellIndex;
         }
 
         public void Draw(SpriteBatch batch, Camera camera)
