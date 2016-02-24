@@ -85,6 +85,10 @@ namespace TileEngine
                 for (int y = 0; y < tileMapHeight; y++)
                 {
                     int textureIndex = map[y, x];
+
+                    if (textureIndex == -1)
+                        continue;
+
                     Texture2D texture = tileTextures[textureIndex];
                     batch.Draw(
                         texture,
