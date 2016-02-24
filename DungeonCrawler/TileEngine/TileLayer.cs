@@ -31,6 +31,16 @@ namespace TileEngine
 
         List<Texture2D> tileTextures = new List<Texture2D>();
         int[,] map;
+        float alpha = 1f;
+
+        public float Alpha
+        {
+            get { return alpha; }
+            set
+            {
+                alpha = MathHelper.Clamp(value, 0f, 1f);
+            }
+        }
 
         public int WidthInPixels
         {
@@ -75,7 +85,7 @@ namespace TileEngine
         public void Draw(SpriteBatch batch, Camera camera)
         {
             // Make sure each layer has its own batch script
-            batch.Begin();
+            batch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             int tileMapWidth = map.GetLength(1);
             int tileMapHeight = map.GetLength(0);
@@ -96,7 +106,8 @@ namespace TileEngine
                             x * tileWidth - (int)camera.Position.X,
                             y * tileHeight - (int)camera.Position.Y,
                             tileWidth,
-                            tileHeight)
+                            tileHeight),
+                        color:new Color(new Vector4(1f, 1f, 1f, Alpha))
                         );
                 }
             }
