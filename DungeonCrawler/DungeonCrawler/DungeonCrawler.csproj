@@ -63,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Content\Layers\PlayerLayer.layer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Layers\Layer3.layer">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

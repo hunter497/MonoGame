@@ -19,6 +19,7 @@ namespace DungeonCrawler
         TileLayer tileLayer;
         TileLayer tileLayer2;
         TileLayer tileLayer3;
+        TileLayer playerLayer;
 
         TileMap tileMap;
 
@@ -51,6 +52,7 @@ namespace DungeonCrawler
             tileMap.Layers.Add(tileLayer);
             tileMap.Layers.Add(tileLayer2);
             tileMap.Layers.Add(tileLayer3);
+            tileMap.Layers.Add(playerLayer);
         }
 
         /// <summary>
@@ -67,6 +69,10 @@ namespace DungeonCrawler
 
             tileLayer3 = TileLayer.FromFile(Content, "Content/Layers/Layer3.layer");
             tileLayer3.Alpha = .5f;
+
+            playerLayer = TileLayer.FromFile(Content, "Content/Layers/PlayerLayer.layer");
+
+
 
         }
 
