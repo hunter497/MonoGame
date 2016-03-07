@@ -64,17 +64,19 @@ namespace FlappyClone.Entities
                 YSpeed = -5;
             }
 
-            if (YSpeed > 0.5f)
-                rotation = 0.5f;
-            else
-                rotation = -0.5f;
+            rotation = (float)Math.Atan2(YSpeed, 6);
 
             position.Y += YSpeed;
         }
 
+        public Rectangle Bounds { get { return new Rectangle((int)position.X - 20, (int)position.Y - 20, 40, 40); } set { } }
+
         public void Draw()
         {
             Statics.SPRITEBATCH.Draw(birdTextures[texturePosition], position, null, Color.White, rotation, new Vector2(20, 20), 1f, SpriteEffects.None, 0f);
+
+            //show debug
+            Statics.SPRITEBATCH.Draw(Statics.PIXEL, Bounds, new Color(1f, 0f, 0f, 0.3f));
         }
     }
 }

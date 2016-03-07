@@ -42,6 +42,7 @@ namespace FlappyClone
         {          
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Statics.SPRITEBATCH = spriteBatch;
+            Statics.PIXEL = Content.Load<Texture2D>("Textures/pixel");
 
             currentScreen = new Screens.GameScreen();
 

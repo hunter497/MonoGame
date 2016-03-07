@@ -13,6 +13,7 @@ namespace FlappyClone.Screens
         public Texture2D background;
         public Entities.Bird player;
         public Entities.Scroll scroll;
+        public List<Entities.Tube> tubes;
 
         public GameScreen()
         {
@@ -25,6 +26,8 @@ namespace FlappyClone.Screens
 
             player = new Entities.Bird();
             scroll = new Entities.Scroll();
+            tubes = new List<Entities.Tube>();
+            tubes.Add(new Entities.Tube());
 
             base.LoadContent();
         }
@@ -33,6 +36,11 @@ namespace FlappyClone.Screens
         {
             player.Update();
             scroll.Update();
+            foreach(var tube in tubes)
+            {
+                tube.Update();
+            }
+
             base.Update();
         }
 
@@ -43,6 +51,11 @@ namespace FlappyClone.Screens
             Statics.SPRITEBATCH.Draw(background, Vector2.Zero, Color.White);
             player.Draw();
             scroll.Draw();
+
+            foreach (var tube in tubes)
+            {
+                tube.Draw();
+            }
 
             Statics.SPRITEBATCH.End();
             base.Draw();

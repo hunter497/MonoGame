@@ -16,11 +16,14 @@ namespace FlappyClone
 
         public static String GAME_TITLE = "FlappyClone";
 
+        public static Random RANDOM = new Random();
+
         public static GameTime GAMETIME;
         public static SpriteBatch SPRITEBATCH;
         public static ContentManager CONTENT;
         public static GraphicsDevice GRAPHICSDEVICE;
 
+        public static Texture2D PIXEL;
         public static Managers.InputManager INPUT;
 
     }
