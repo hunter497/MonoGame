@@ -11,6 +11,8 @@ namespace FlappyClone.Screens
     public class GameScreen : Screen
     {
         public Texture2D background;
+        public Entities.Bird player;
+        public Entities.Scroll scroll;
 
         public GameScreen()
         {
@@ -21,19 +23,26 @@ namespace FlappyClone.Screens
         {
             background = Statics.CONTENT.Load<Texture2D>("Textures/background");
 
+            player = new Entities.Bird();
+            scroll = new Entities.Scroll();
+
             base.LoadContent();
         }
 
         public override void Update()
         {
+            player.Update();
+            scroll.Update();
             base.Update();
         }
 
         public override void Draw()
         {
-            Statics.SPRITEBATCH.Begin();
+            Statics.SPRITEBATCH.Begin(sortMode:SpriteSortMode.Deferred, blendState:BlendState.AlphaBlend, samplerState: SamplerState.LinearWrap);
 
             Statics.SPRITEBATCH.Draw(background, Vector2.Zero, Color.White);
+            player.Draw();
+            scroll.Draw();
 
             Statics.SPRITEBATCH.End();
             base.Draw();
