@@ -61,7 +61,7 @@ namespace FlappyClone.Entities
 
             if (Statics.INPUT.isKeyPressed(Microsoft.Xna.Framework.Input.Keys.Space) && canJump)
             {
-                YSpeed = -5;
+                YSpeed = -6;
             }
 
             rotation = (float)Math.Atan2(YSpeed, 6);

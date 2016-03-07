@@ -14,6 +14,8 @@ namespace FlappyClone
 
         Screens.Screen currentScreen;
 
+
+
         public FlappyClone()
         {
             graphics = new GraphicsDeviceManager(this);
