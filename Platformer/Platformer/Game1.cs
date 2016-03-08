@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Platformer.Managers;
 
 namespace Platformer
 {
@@ -26,7 +27,12 @@ namespace Platformer
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            ScreenManager.Instance.Initialize();
+
+            ScreenManager.Instance.Dimensions = new Vector2(800, 600);
+            graphics.PreferredBackBufferWidth = (int)ScreenManager.Instance.Dimensions.X;
+            graphics.PreferredBackBufferHeight = (int)ScreenManager.Instance.Dimensions.Y;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
