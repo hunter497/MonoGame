@@ -26,6 +26,8 @@ namespace FlappyClone.Entities
 
         public bool canJump = true;
 
+        public bool dead = false;
+
         public Bird()
         {
             birdTextures = new Texture2D[3];
@@ -66,7 +68,15 @@ namespace FlappyClone.Entities
 
             rotation = (float)Math.Atan2(YSpeed, 6);
 
+            
             position.Y += YSpeed;
+
+            if(position.Y > 500)
+            {
+                dead = true;
+            }
+
+            
         }
 
         public Rectangle Bounds { get { return new Rectangle((int)position.X - 20, (int)position.Y - 20, 40, 40); } set { } }
@@ -75,8 +85,8 @@ namespace FlappyClone.Entities
         {
             Statics.SPRITEBATCH.Draw(birdTextures[texturePosition], position, null, Color.White, rotation, new Vector2(20, 20), 1f, SpriteEffects.None, 0f);
 
-            //show debug
-            Statics.SPRITEBATCH.Draw(Statics.PIXEL, Bounds, new Color(1f, 0f, 0f, 0.3f));
+            if(Statics.DEBUG)
+                Statics.SPRITEBATCH.Draw(Statics.PIXEL, Bounds, new Color(1f, 0f, 0f, 0.3f));
         }
     }
 }

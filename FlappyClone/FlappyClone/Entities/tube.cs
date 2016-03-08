@@ -33,10 +33,12 @@ namespace FlappyClone.Entities
         {
             Statics.SPRITEBATCH.Draw(texture, position, Color.White);
 
-            //show debug
-            Statics.SPRITEBATCH.Draw(Statics.PIXEL, TopBound, new Color(1f, 0f, 0f, 0.3f));
-            //show debug
-            Statics.SPRITEBATCH.Draw(Statics.PIXEL, BottomBound, new Color(1f, 0f, 0f, 0.3f));
+            if(Statics.DEBUG)
+            {
+                Statics.SPRITEBATCH.Draw(Statics.PIXEL, TopBound, new Color(1f, 0f, 0f, 0.3f));
+                Statics.SPRITEBATCH.Draw(Statics.PIXEL, BottomBound, new Color(1f, 0f, 0f, 0.3f));
+            }
+            
         }
     }
 }

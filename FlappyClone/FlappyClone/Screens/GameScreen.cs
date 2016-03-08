@@ -12,8 +12,12 @@ namespace FlappyClone.Screens
     {
         public Texture2D background;
         public Texture2D sand;
+        public Texture2D gameOver;
         public Entities.Bird player;
         public Entities.Scroll scroll;
+        public SpriteFont font;
+        public int score = 0;
+
         public List<Entities.Tube> tubes;
         public int tubeTimer = 2000;
         public double tubeElapsed = 0;
@@ -23,36 +27,68 @@ namespace FlappyClone.Screens
 
         }
 
+
+
         public override void LoadContent()
         {
             background = Statics.CONTENT.Load<Texture2D>("Textures/background");
             sand = Statics.CONTENT.Load<Texture2D>("Textures/sand");
+            font = Statics.CONTENT.Load<SpriteFont>("Fonts/font");
+            gameOver = Statics.CONTENT.Load<Texture2D>("Textures/gameover");
 
+            Reset();
+            base.LoadContent();
+        }
+
+        public void Reset()
+        {
             player = new Entities.Bird();
             scroll = new Entities.Scroll();
+
             tubes = new List<Entities.Tube>();
             tubes.Add(new Entities.Tube());
-
-            base.LoadContent();
+            score = 0;
+            tubeElapsed = 0;
         }
 
         public override void Update()
         {
-            tubeCreator();
-            for(int i=tubes.Count-1; i > -1; i--)
+            TubeCreator();
+            if(!player.dead)
             {
-                if (tubes[i].position.X < -50)
-                    tubes.RemoveAt(i);
-                else
-                    tubes[i].Update();
+                for (int i = tubes.Count - 1; i > -1; i--)
+                {
+                    if (tubes[i].position.X < -50)
+                        tubes.RemoveAt(i);
+                    else
+                    {
+                        tubes[i].Update();
+                        if (!tubes[i].scored && player.position.X > tubes[i].position.X + 50)
+                        {
+                            tubes[i].scored = true;
+                            score++;
+                        }
+
+                        if (player.Bounds.Intersects(tubes[i].BottomBound) || player.Bounds.Intersects(tubes[i].TopBound))
+                        {
+                            player.dead = true;
+                        }
+                    }
+                }
+                player.Update();
+                scroll.Update();
             }
-            player.Update();
-            scroll.Update();
+            
+            if(player.dead && Statics.INPUT.isKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
+            {
+                Reset();
+            }
+            
 
             base.Update();
         }
 
-        public void tubeCreator()
+        public void TubeCreator()
         {
             tubeElapsed += Statics.GAMETIME.ElapsedGameTime.TotalMilliseconds;
 
@@ -61,6 +97,11 @@ namespace FlappyClone.Screens
                 tubes.Add(new Entities.Tube());
                 tubeElapsed = 0;
             }
+        }
+
+        public void Score()
+        {
+
         }
 
         public override void Draw()
@@ -80,7 +121,14 @@ namespace FlappyClone.Screens
             scroll.Draw();
 
             player.Draw();
-            
+
+            Statics.SPRITEBATCH.DrawString(font, "Score: " + score.ToString(), new Vector2(10, 10), Color.Red);
+
+            if(player.dead)
+            {
+                Statics.SPRITEBATCH.Draw(Statics.PIXEL, new Rectangle(0, 0, Statics.GAME_WIDTH, Statics.GAME_HEIGHT), new Color(1f, 0f, 0f, 0.3f));
+                Statics.SPRITEBATCH.Draw(gameOver, new Vector2(0, 80), Color.White);
+            }
 
             Statics.SPRITEBATCH.End();
             base.Draw();

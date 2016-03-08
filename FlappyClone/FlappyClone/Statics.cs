@@ -26,5 +26,7 @@ namespace FlappyClone
         public static Texture2D PIXEL;
         public static Managers.InputManager INPUT;
 
+        public static bool DEBUG = false;
+
     }
 }

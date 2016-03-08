@@ -121,3 +121,9 @@
 /processorParam:TextureFormat=Color
 /build:Textures/tuyaux.png
 
+#begin Fonts/font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/font.spritefont
+
