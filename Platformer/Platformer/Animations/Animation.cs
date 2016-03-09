@@ -19,6 +19,8 @@ namespace Platformer.Animations
         protected float rotation, scale, axis;
         protected Vector2 origin, position;
         protected ContentManager content;
+        protected float alpha;
+        protected bool isActive { get; set; }
 
         public virtual void LoadContent(ContentManager Content, Texture2D image, string text, Vector2 position)
         {
@@ -36,17 +38,32 @@ namespace Platformer.Animations
             rotation = 0.0f;
             axis = 0.0f;
             scale = 1.0f;
+            alpha = 1.0f;
+            isActive = false;
         }
 
         public virtual void UnloadContent()
         {
             image = null;
-            text = null;
+            text = string.Empty;
+            sourceRect = Rectangle.Empty;
             content.Unload();
         }
 
         public virtual void Update(GameTime gameTime) { }
-        public virtual void Draw(SpriteBatch spriteBatch) { }
+        public virtual void Draw(SpriteBatch spriteBatch) {
+            if(image != null)
+            {
+                origin = new Vector2(sourceRect.Width / 2, sourceRect.Height / 2);
+                spriteBatch.Draw(image, position + origin, sourceRect, Color.White, rotation, origin, scale, SpriteEffects.None, 0.0f);
+            }
+
+            if(text != string.Empty)
+            {
+                origin = new Vector2(font.MeasureString(text).X / 2, font.MeasureString(text).Y / 2);
+                spriteBatch.DrawString(font, text, position + origin, color, rotation, origin, scale, SpriteEffects.None, 0.0f);
+            }
+        }
 
     }
 }

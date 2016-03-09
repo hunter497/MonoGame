@@ -44,6 +44,8 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Animations\Animation.cs" />
+    <Compile Include="Animations\FadeAnimation.cs" />
     <Compile Include="Platformer.cs" />
     <Compile Include="Managers\ScreenManager.cs" />
     <Compile Include="Program.cs" />
