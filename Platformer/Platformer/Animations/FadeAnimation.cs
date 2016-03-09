@@ -24,7 +24,7 @@ namespace Platformer.Animations
             fadeSpeed = 1.0f;
             defaultTime = new TimeSpan(0, 0, 1);
             timer = defaultTime;
-            activateValue = false;
+            startTimer = false;
             activateValue = 0.0f;
         }
     }
